@@ -1,0 +1,43 @@
+services:
+  db:
+    image: ghcr.io/postgresml/postgresml:2.7.12
+    container_name: keren-ai-db
+    command: sudo -u postgresml psql -d postgresml
+    tty: true
+    stdin_open: true
+    ports:
+      - "5000:5432"
+      - "8000:8000"
+    volumes:
+      - keren_ai_data:/var/lib/postgresql
+    environment:
+      - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
+      - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - POSTGRES_DB=postgresml
+    networks:
+      - internal-network
+
+  app:
+    build: .
+    container_name: keren-ai-app
+    ports:
+      - "4000:4000"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - GROQ_BASE_URL=${GROQ_BASE_URL}
+      - GROQ_MODEL=${GROQ_MODEL}
+      - GROQ_TEMPERATURE=${GROQ_TEMPERATURE}
+    networks:
+      - internal-network
+
+networks:
+  internal-network:
+    driver: bridge
+
+volumes:
+  keren_ai_data:
