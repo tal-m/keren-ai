@@ -1,4 +1,4 @@
-package com.akatsuki.keren_ai.llm;
+package com.akatsuki.keren_ai.config;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
@@ -12,6 +12,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 @Configuration
 public class LlmConfig {
+
+//    @Bean
+//    @Qualifier("openAiChatClient")
+//    public ChatClient openAiChatClient(ChatModel openAiChatModel) {
+//        return ChatClient.builder(openAiChatModel).build();
+//    }
 
     @Bean
     @Qualifier("groqChatClient")
