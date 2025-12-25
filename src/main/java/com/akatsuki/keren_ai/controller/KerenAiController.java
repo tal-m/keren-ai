@@ -1,9 +1,10 @@
 package com.akatsuki.keren_ai.controller;
 
+import com.akatsuki.keren_ai.domain.ChatMetricSummary;
 import com.akatsuki.keren_ai.domain.Chunk;
+import com.akatsuki.keren_ai.entity.ChatMetric;
 import com.akatsuki.keren_ai.service.KerenAiService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClientResponse;
 import org.springframework.ai.document.Document;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +36,11 @@ public class KerenAiController {
         return kerenAiService.addChunks(chunks);
     }
 
+    @PutMapping("/chunks/{id}")
+    public Document updateChunk(@PathVariable String id, @RequestBody Chunk chunk) {
+        return kerenAiService.updateChunk(id, chunk);
+    }
+
     @GetMapping("/chunks")
     public List<Document> getChunks() {
         return kerenAiService.getChunks();
@@ -48,5 +54,15 @@ public class KerenAiController {
     @PostMapping("/embeddings")
     public List<Document> getSimilarEmbeddings(@RequestBody String query) {
         return kerenAiService.getSimilarEmbeddings(query);
+    }
+
+    @GetMapping("/metrics")
+    public List<ChatMetric> getAllMetrics() {
+        return kerenAiService.getAllMetrics();
+    }
+
+    @GetMapping("/metrics/summary")
+    public ChatMetricSummary getMetricSummary() {
+        return kerenAiService.getMetricSummary();
     }
 }
