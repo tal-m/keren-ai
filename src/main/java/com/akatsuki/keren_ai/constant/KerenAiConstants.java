@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class kerenAiConstants {
+public class KerenAiConstants {
 
     public static final String SYSTEM_PROMPT = """
     אתה עוזר וירטואלי המייצג את תוכנית 'קרן אור' באוניברסיטת רייכמן.

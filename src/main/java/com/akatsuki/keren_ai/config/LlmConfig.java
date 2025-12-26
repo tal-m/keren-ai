@@ -20,13 +20,11 @@ public class LlmConfig {
 //    }
 
     @Bean
-    @Qualifier("groqChatClient")
     public ChatClient groqChatClient(@Qualifier("groqChatModel") ChatModel groqChatModel) {
         return ChatClient.builder(groqChatModel).build();
     }
 
     @Bean
-    @Qualifier("groqChatModel")
     public ChatModel groqChatModel(
             @Value("${groq.api.key}") String apiKey,
             @Value("${groq.base.url}") String baseUrl,
