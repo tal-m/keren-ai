@@ -17,8 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.akatsuki.keren_ai.constant.kerenAiConstants.SYSTEM_PROMPT;
-import static com.akatsuki.keren_ai.constant.kerenAiConstants.USER_PROMPT_TEMPLATE;
+import static com.akatsuki.keren_ai.constant.KerenAiConstants.SYSTEM_PROMPT;
+import static com.akatsuki.keren_ai.constant.KerenAiConstants.USER_PROMPT_TEMPLATE;
 import static com.akatsuki.keren_ai.exception.constant.ExceptionConstant.KEREN_AI_ERROR;
 
 @Slf4j
