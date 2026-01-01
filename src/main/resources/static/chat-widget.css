@@ -1,0 +1,52 @@
+/* Floating chat widget styles */
+.chat-widget, .chat-widget * { box-sizing: border-box; }
+.chat-widget { position: fixed; bottom: 20px; right: 20px; width: 360px; height: 480px; z-index: 99999; background: #fff; border-radius: 10px; box-shadow: 0 12px 40px rgba(0,0,0,0.25); overflow: hidden; display: flex; flex-direction: column; border: 1px solid #e6e6e6; }
+.chat-widget.hidden { display: none; }
+.chat-widget.minimized { height: 44px; width: 260px; }
+.chat-widget .cw-header {
+  position: relative; /* allow absolute handle */
+  height: 44px;
+  background: linear-gradient(90deg,#003f7f,#002e66);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  cursor: move;
+  direction: ltr; /* ensure flex start is left */
+  justify-content: space-between; /* title left, controls right */
+}
+/* resize handle on top-left */
+.chat-widget .cw-resize {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: ns-resize;
+  touch-action: none; /* prevent browser touch scrolling while resizing */
+  color: rgba(255,255,255,0.9);
+  font-size: 12px;
+  user-select: none;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  z-index: 100000;
+}
+/* show full logo without cropping; slightly larger box and light padding */
+.chat-widget .cw-logo { width: 40px; height: 40px; object-fit: contain; margin-right: 8px; padding: 0; background: transparent; border-radius: 0; opacity: 1; }
+.chat-widget .cw-title { font-weight: 700; font-size: 0.95rem; margin-left: 6px; text-align: left; }
+.chat-widget .cw-controls { margin-left: auto; display: flex; gap: 6px; align-items: center; }
+.chat-widget .cw-controls button { background: rgba(255,255,255,0.16); border: none; color: white; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
+.chat-widget iframe { border: 0; width: 100%; height: calc(100% - 44px); display: block; }
+
+/* small open button when widget is closed */
+.chat-open-btn { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; z-index: 99999; border-radius: 50%; background: #003f7f; color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0,0,0,0.22); border: none; cursor: pointer; font-size: 20px; }
+.chat-open-btn.hidden { display: none; }
+
+/* responsive adjustments */
+@media (max-width: 600px) {
+  .chat-widget { width: 90vw; height: 60vh; right: 5vw; bottom: 10vh; }
+}

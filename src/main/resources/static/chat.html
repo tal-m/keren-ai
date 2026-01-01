@@ -13,22 +13,18 @@
         .bot { align-self: flex-end; background-color: #e9e9eb; color: #333; }
         #input-area { display: flex; padding: 20px; background: white; border-top: 1px solid #ddd; }
         input[type="text"], textarea { flex: 1; padding: 12px; border: 1px solid #ccc; border-radius: 4px; outline: none; }
-        button { padding: 10px 20px; margin-right: 10px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .topbar { padding:12px; background:white; border-bottom:1px solid #eee; display:flex; align-items:center; gap:12px; }
-        .link-back { margin-left: auto; text-decoration: none; color:#007bff; }
+        button { padding: 10px 14px; margin-right: 10px; background: #003f7f; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 18px; }
+        /* ensure input-area button is visually separated in RTL */
+        #input-area > button { margin-right: 10px; margin-left: 8px; }
     </style>
 </head>
 <body>
-<div class="topbar">
-    <h3 style="margin:0">צ'אט</h3>
-    <a class="link-back" href="/index.html">חזור לדף הבית</a>
-</div>
 <div id="main">
     <div id="chat-view">
         <div id="chat-box"></div>
         <div id="input-area">
             <input type="text" id="user-input" placeholder="שאל אותי משהו על קרן אור...">
-            <button onclick="send()">שלח</button>
+            <button id="send-btn" onclick="send()" aria-label="שלח">➤</button>
         </div>
     </div>
 </div>
