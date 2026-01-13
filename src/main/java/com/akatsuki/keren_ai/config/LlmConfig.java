@@ -13,11 +13,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 @Configuration
 public class LlmConfig {
 
-//    @Bean
-//    @Qualifier("openAiChatClient")
-//    public ChatClient openAiChatClient(ChatModel openAiChatModel) {
-//        return ChatClient.builder(openAiChatModel).build();
-//    }
+    @Bean
+    public ChatClient openAiChatClient(ChatModel openAiChatModel) {
+        return ChatClient.builder(openAiChatModel).build();
+    }
 
     @Bean
     public ChatClient groqChatClient(@Qualifier("groqChatModel") ChatModel groqChatModel) {
