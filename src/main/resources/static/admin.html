@@ -43,8 +43,8 @@
 <body>
 
 <div class="tabs">
-    <button class="tab active" id="tab-info">מידע</button>
-    <button class="tab" id="tab-history">היסטוריית שאלות</button>
+    <button class="tab active" id="tab-history">היסטוריית שאלות</button>
+    <button class="tab" id="tab-info">מידע</button>
     <div style="margin-left:auto;padding:12px;display:flex;align-items:center;gap:8px;">
         <!-- Home link removed: admin page is the single entry point -->
     </div>
@@ -52,7 +52,7 @@
 
 <div id="main">
 
-    <div id="info-view" class="active">
+    <div id="info-view">
         <div id="info-toolbar">
             <button id="refresh-chunks">רענן</button>
             <button id="show-add" class="add-btn">הוסף קטע +</button>
@@ -76,7 +76,7 @@
         <div id="chunks-list"></div>
     </div>
 
-    <div id="history-view">
+    <div id="history-view" class="active">
         <div id="history-toolbar" style="padding:12px;display:flex;align-items:center;gap:8px;background:white;border-bottom:1px solid #eee;">
             <button id="refresh-metrics">רענן</button>
             <div style="flex:1"></div>
@@ -393,7 +393,7 @@
     }
 
     // Initialize
-    showTab('info');
+    showTab('history');
 
 </script>
 </body>
