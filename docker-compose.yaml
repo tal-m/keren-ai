@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: admin-service/Dockerfile
-    container_name: keren-ai-app
+    container_name: keren-ai-admin
     ports:
       - "4000:4000"
     depends_on:
@@ -46,7 +46,7 @@ services:
       dockerfile: auth-service/Dockerfile
     container_name: keren-ai-auth
     ports:
-      - "8080:8080"
+      - "4001:4001"
     depends_on:
       - db
     environment:

@@ -28,6 +28,6 @@ WORKDIR /app
 
 COPY --from=builder /app/auth-service/target/*.jar ./app.jar
 
-EXPOSE 4000
+EXPOSE 4001
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
