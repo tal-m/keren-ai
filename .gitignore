@@ -34,3 +34,6 @@ build/
 
 ### environment variables ###
 .env
+
+## Docker data dir
+keren_ai_data
