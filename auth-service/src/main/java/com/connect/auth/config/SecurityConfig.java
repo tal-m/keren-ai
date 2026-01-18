@@ -18,14 +18,10 @@ import com.akatsuki.auth.common.config.CommonSecurityConfig;
 public class SecurityConfig {
 
     private final CommonSecurityConfig commonSecurityConfig;
-    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain authSecurityFilterChain(HttpSecurity http) throws Exception {
         commonSecurityConfig.commonSecurityFilterChain(http);
-
-        http.oauth2Login(oauth2 -> oauth2.successHandler(oAuth2SuccessHandler));
-
         return http.build();
     }
 
