@@ -2,29 +2,39 @@ services:
   db:
     image: ghcr.io/postgresml/postgresml:2.7.12
     container_name: keren-ai-db
-    command: sudo -u postgresml psql -d postgresml
-    tty: true
-    stdin_open: true
-    ports:
-      - "5000:5432"
-      - "8000:8000"
+    command: tail -f /dev/null
+      #command:  sudo -u postgresml psql -d postgresml
+      #tty: true
+      #stdin_open: true
+      #    ports:
+      #- "5000:5432"
+      #- "8000:8000"
     volumes:
-      - keren_ai_data:/var/lib/postgresql
+      - ./keren_ai_data:/var/lib/postgresql
     environment:
       - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
       - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - POSTGRES_DB=postgresml
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgresml"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
     networks:
       - internal-network
 
-  app:
+  kerenai:
     build: .
     container_name: keren-ai-app
-    ports:
-      - "4000:4000"
+      #    ports:
+      #- "4000:4000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+
     environment:
+      - JAVA_TOOL_OPTIONS=-Djava.net.preferIPv4Stack=true
       - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
@@ -35,12 +45,45 @@ services:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_MODEL=${OPENAI_MODEL}
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+    restart: unless-stopped
     networks:
       - internal-network
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      # Match incoming requests on a specific hostname
+      - "traefik.http.routers.kerenai.rule=Host(`${KERENAI_HOSTNAME}`)"
+      # Assign the router to a named Traefik service
+      - "traefik.http.routers.kerenai.service=kerenai"
+      # Use the 'websecure' (HTTPS) entry point
+      - "traefik.http.routers.kerenai.entrypoints=websecure"
+      # Define the internal container port for routing
+      - "traefik.http.services.kerenai.loadbalancer.server.port=4000"
+      # Enable TLS on this router
+      - "traefik.http.routers.kerenai.tls=true"
+      # Use Let's Encrypt for certificate management
+      - "traefik.http.routers.kerenai.tls.certresolver=letsencrypt"
+      # Pass the original Host header to the container
+      - "traefik.http.services.kerenai.loadbalancer.passhostheader=true"
+      # Apply a compression middleware
+      - "traefik.http.routers.kerenai.middlewares=compresstraefik"
+      # Define settings for the compression middleware
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      # Specify which Docker network Traefik should use for routing
+      - "traefik.docker.network=traefik"
+
+
 
 networks:
   internal-network:
     driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: "docker-kerenai"
+
+
+  traefik:
+    external: true
+
 
 volumes:
   keren_ai_data:
