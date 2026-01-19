@@ -1,0 +1,32 @@
+server:
+  port: 4003
+
+spring:
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: auth-service-route
+              uri: http://auth-service:4001
+              predicates:
+                - Path=/api/auth/**
+              filters:
+                - name: RewritePath
+                  args:
+                    regexp: "/api/auth/(?<segment>.*)"
+                    replacement: "/auth/public/${segment}"
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "${FRONTEND_URL:http://localhost:5173}"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true

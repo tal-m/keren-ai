@@ -1,0 +1,15 @@
+# Root ignores for the whole repo
+
+# Local environment files (secrets)
+.env
+.env.*
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Maven / Java build artifacts
+**/target/
+**/*.log
