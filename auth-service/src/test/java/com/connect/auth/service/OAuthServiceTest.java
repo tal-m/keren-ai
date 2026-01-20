@@ -2,7 +2,6 @@ package com.akatsuki.auth.service;
 
 import com.akatsuki.auth.common.exception.AuthCommonInvalidTokenException;
 import com.akatsuki.auth.common.exception.AuthCommonSignatureMismatchException;
-import com.akatsuki.auth.dto.AuthResponseDTO;
 import com.akatsuki.auth.dto.OAuthResponseDTO;
 import com.akatsuki.auth.enums.AuthProvider;
 import com.akatsuki.auth.exception.WrongProviderException;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 

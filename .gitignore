@@ -4,6 +4,8 @@
 .env
 .env.*
 
+auth-common
+
 # OS / IDE
 .DS_Store
 Thumbs.db

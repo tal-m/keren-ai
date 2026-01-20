@@ -3,10 +3,8 @@ package com.akatsuki.auth.service.oauth.handler;
 
 import com.akatsuki.auth.common.exception.AuthCommonInvalidTokenException;
 import com.akatsuki.auth.common.exception.AuthCommonSignatureMismatchException;
-import com.akatsuki.auth.dto.AuthResponseDTO;
 import com.akatsuki.auth.dto.OAuthResponseDTO;
 import com.akatsuki.auth.exception.WrongProviderException;
-import com.akatsuki.auth.repository.UserRepository;
 import com.akatsuki.auth.service.OAuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,32 +1,22 @@
 FROM maven:3.9.9-eclipse-temurin-21 AS builder
 
-# Declare build arguments for GitHub credentials
-ARG GITHUB_USERNAME
-ARG GITHUB_TOKEN
-
 WORKDIR /app
 
-COPY pom.xml .
+# Copy only this service's POM first (for better layer caching)
+COPY pom.xml pom.xml
 
-# Copy the auth-common module (The dependency)
-COPY auth-common/pom.xml auth-common/
-COPY auth-common/src auth-common/src
+# Download dependencies
+RUN mvn -f pom.xml -B dependency:go-offline
 
-# Copy the admin-service module (The app)
-COPY admin-service/pom.xml admin-service/
-COPY admin-service/src admin-service/src
-
-# Copy Auth Service (Maven needs to see it to start)
-COPY auth-service/pom.xml auth-service/
-COPY auth-service/src auth-service/src
-
-RUN mvn -B -DskipTests clean package -pl auth-service -am
+# Copy sources and build
+COPY src src
+RUN mvn -f pom.xml -B -DskipTests clean package
 
 FROM eclipse-temurin:21-jre-jammy AS runner
 
 WORKDIR /app
 
-COPY --from=builder /app/auth-service/target/*.jar ./app.jar
+COPY --from=builder /app/target/*.jar ./app.jar
 
 EXPOSE 4001
 

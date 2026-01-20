@@ -1,6 +1,5 @@
 package com.akatsuki.auth.config;
 
-import com.akatsuki.auth.service.oauth.handler.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

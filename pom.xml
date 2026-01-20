@@ -19,12 +19,6 @@
     <name>keren-ai-parent</name>
     <description>Parent Project for Keren AI Microservices</description>
 
-    <modules>
-        <module>auth-common</module>
-        <module>admin-service</module>
-        <module>auth-service</module>
-    </modules>
-
     <properties>
         <java.version>21</java.version>
         <spring-ai.version>1.1.2</spring-ai.version>
@@ -39,12 +33,6 @@
                 <version>${spring-ai.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>com.akatsuki</groupId>
-                <artifactId>auth-common</artifactId>
-                <version>${auth-common.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

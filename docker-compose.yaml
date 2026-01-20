@@ -21,8 +21,8 @@ services:
 
   admin-service:
     build:
-      context: .
-      dockerfile: admin-service/Dockerfile
+      context: ./admin-service
+      dockerfile: Dockerfile
     container_name: keren-ai-admin
     depends_on:
       db:
@@ -43,8 +43,8 @@ services:
 
   auth-service:
     build:
-      context: .
-      dockerfile: auth-service/Dockerfile
+      context: ./auth-service
+      dockerfile: Dockerfile
     container_name: keren-ai-auth
     depends_on:
       db:
@@ -61,8 +61,8 @@ services:
 
   api-gateway:
     build:
-      context: .
-      dockerfile: api-gateway/Dockerfile
+      context: ./api-gateway
+      dockerfile: Dockerfile
     container_name: keren-ai-api-gateway
     ports:
       - "4003:4003"
@@ -74,6 +74,18 @@ services:
       - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
     networks:
       - internal-network
+
+#  frontend:
+#    build:
+#      context: .
+#      dockerfile: keren-ai-frontend/Dockerfile
+#    container_name: keren-ai-frontend
+#    ports:
+#      - "4173:4173"
+#    depends_on:
+#      - api-gateway
+#    networks:
+#      - internal-network
 
 networks:
   internal-network:

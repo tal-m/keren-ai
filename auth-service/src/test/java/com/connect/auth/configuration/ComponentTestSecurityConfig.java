@@ -2,7 +2,6 @@ package com.akatsuki.auth.configuration;
 
 import com.akatsuki.auth.common.security.JwtAuthenticationFilter;
 import com.akatsuki.auth.common.util.AsymmetricJwtUtil;
-import com.akatsuki.auth.config.JpaAuditingConfig;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import java.util.List;
-import java.util.Optional;
 
 @TestConfiguration
 @Profile("component-test")
