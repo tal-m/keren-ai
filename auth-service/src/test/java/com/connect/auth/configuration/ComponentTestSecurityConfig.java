@@ -36,7 +36,7 @@ public class ComponentTestSecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .defaultSuccessUrl("/oauth2/success", true)
                 )
-                .addFilterBefore(new JwtAuthenticationFilter(asymmetricJwtUtil, List.of("/auth/public/**")), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(asymmetricJwtUtil), UsernamePasswordAuthenticationFilter.class);
         ;
         return http.build();
     }

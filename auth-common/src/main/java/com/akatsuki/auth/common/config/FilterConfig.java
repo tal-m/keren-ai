@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class FilterConfig {
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(AsymmetricJwtUtil asymmetricJwtUtil, SecurityProperties securityProperties) {
-        return new JwtAuthenticationFilter(asymmetricJwtUtil, securityProperties.getPermitAllRoutes());
+    public JwtAuthenticationFilter jwtAuthenticationFilter(AsymmetricJwtUtil asymmetricJwtUtil) {
+        return new JwtAuthenticationFilter(asymmetricJwtUtil);
     }
 }

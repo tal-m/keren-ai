@@ -106,7 +106,11 @@
 		<dependency>
 			<groupId>io.github.danieliyahu1</groupId>
 			<artifactId>auth-common</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 	</dependencies>
 

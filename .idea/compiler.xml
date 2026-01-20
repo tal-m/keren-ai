@@ -10,7 +10,7 @@
         <module name="api-gateway" />
         <module name="auth-service" />
       </profile>
-      <profile name="Annotation profile for keren-ai-parent" enabled="true">
+      <profile name="Annotation profile for admin-service" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
@@ -20,6 +20,9 @@
         <module name="keren-ai" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="keren-ai-parent" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

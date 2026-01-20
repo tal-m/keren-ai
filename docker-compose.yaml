@@ -2,6 +2,7 @@ services:
   db:
     image: ghcr.io/postgresml/postgresml:2.7.12
     container_name: keren-ai-db
+    restart: unless-stopped
     command: sudo -u postgresml psql -d postgresml
     tty: true
     stdin_open: true
@@ -22,13 +23,22 @@ services:
   admin-service:
     build:
       context: ./admin-service
-      dockerfile: Dockerfile
     container_name: keren-ai-admin
+    #restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "(command -v curl >/dev/null 2>&1 && curl -fsS http://localhost:4000/actuator/health >/dev/null) || (command -v wget >/dev/null 2>&1 && wget -qO- http://localhost:4000/actuator/health >/dev/null) || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     environment:
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgresml
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - GROQ_API_KEY=${GROQ_API_KEY}
@@ -37,55 +47,84 @@ services:
       - GROQ_TEMPERATURE=${GROQ_TEMPERATURE}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_MODEL=${OPENAI_MODEL}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=prod
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport
     networks:
       - internal-network
 
   auth-service:
     build:
       context: ./auth-service
-      dockerfile: Dockerfile
     container_name: keren-ai-auth
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "(command -v curl >/dev/null 2>&1 && curl -fsS http://localhost:4001/actuator/health >/dev/null) || (command -v wget >/dev/null 2>&1 && wget -qO- http://localhost:4001/actuator/health >/dev/null) || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     environment:
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgresml
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=prod
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport
     networks:
       - internal-network
 
   api-gateway:
     build:
       context: ./api-gateway
-      dockerfile: Dockerfile
     container_name: keren-ai-api-gateway
+    restart: unless-stopped
     ports:
       - "4003:4003"
     depends_on:
-      - admin-service
-      - auth-service
+      admin-service:
+        condition: service_healthy
+      auth-service:
+        condition: service_healthy
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "(command -v curl >/dev/null 2>&1 && curl -fsS http://localhost:4003/actuator/health >/dev/null) || (command -v wget >/dev/null 2>&1 && wget -qO- http://localhost:4003/actuator/health >/dev/null) || exit 1"
+      ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     environment:
       - FRONTEND_URL=${FRONTEND_URL}
-      - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}
+      - SPRING_PROFILES_ACTIVE=prod
+      - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
     networks:
       - internal-network
 
-#  frontend:
-#    build:
-#      context: .
-#      dockerfile: keren-ai-frontend/Dockerfile
-#    container_name: keren-ai-frontend
-#    ports:
-#      - "4173:4173"
-#    depends_on:
-#      - api-gateway
-#    networks:
-#      - internal-network
+  frontend:
+    build:
+      context: ./keren-ai-frontend
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL}
+    container_name: keren-ai-frontend
+    restart: unless-stopped
+    ports:
+      - "4173:4173"
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+    networks:
+      - internal-network
 
 networks:
   internal-network:

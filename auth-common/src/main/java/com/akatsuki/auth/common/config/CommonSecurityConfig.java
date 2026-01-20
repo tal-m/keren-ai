@@ -33,11 +33,15 @@ public class CommonSecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/error").permitAll();
+                    auth.requestMatchers("/actuator/health").permitAll();
 
                     auth.dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll();
 
-                    properties.getPermitAllRoutes().forEach(route ->
-                            auth.requestMatchers(route).permitAll());
+                    if (properties.getPermitAllRoutes() != null && !properties.getPermitAllRoutes().isEmpty()) {
+                        auth.requestMatchers(
+                                properties.getPermitAllRoutes().toArray(new String[0])
+                        ).permitAll();
+                    }
 
                     auth.anyRequest().authenticated();
 

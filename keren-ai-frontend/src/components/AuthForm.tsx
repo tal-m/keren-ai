@@ -27,7 +27,7 @@ const AuthForm: React.FC = () => {
     }
 
     try {
-      const endpoint = mode === 'login' ? '/auth/login' : '/auth/register';
+      const endpoint = mode === 'login' ? '/api/auth/login' : '/auth/register';
       const body =
         mode === 'login'
           ? { email, password }

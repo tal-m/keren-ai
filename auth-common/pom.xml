@@ -12,7 +12,8 @@
 
 	<groupId>io.github.danieliyahu1</groupId>
 	<artifactId>auth-common</artifactId>
-	<version>1.0.0</version> <packaging>jar</packaging>
+	<version>1.0.3</version>
+	<packaging>jar</packaging>
 
 	<name>auth-common</name>
 	<description>Common Authentication Utilities for Spring Boot microservices</description>
