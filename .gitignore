@@ -34,6 +34,9 @@ build/
 
 ### environment variables ###
 .env
+.env.*
+
+auth-common
 
 ## Docker data dir
 keren_ai_data
