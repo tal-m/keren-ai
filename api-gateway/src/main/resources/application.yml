@@ -25,6 +25,16 @@ spring:
                 regexp: "/api/auth/(?<segment>.*)"
                 replacement: "/auth/public/${segment}"
 
+        - id: admin-service-route
+          uri: http://admin-service:4000
+          predicates:
+            - Path=/api/v1/admin/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: "/api/v1/admin/(?<segment>.*)"
+                replacement: "/admin/${segment}"
+
       globalcors:
         add-to-simple-url-handler-mapping: true
         cors-configurations:

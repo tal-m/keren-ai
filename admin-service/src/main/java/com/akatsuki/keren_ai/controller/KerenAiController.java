@@ -6,13 +6,14 @@ import com.akatsuki.keren_ai.entity.ChatMetric;
 import com.akatsuki.keren_ai.service.KerenAiService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/keren-ai")
+@RequestMapping("/api/v1/admin")
 public class KerenAiController {
     private final KerenAiService kerenAiService;
 
@@ -27,27 +28,27 @@ public class KerenAiController {
     }
 
     @PostMapping("/chunks")
-    public Document addChunks(@RequestBody Chunk chunk) {
+    public Document addChunks(Authentication authentication, @RequestBody Chunk chunk) {
         return kerenAiService.addChunk(chunk);
     }
 
     @PostMapping("/chunks/batch")
-    public List<Document> addChunks(@RequestBody List<Chunk> chunks) {
+    public List<Document> addChunks(Authentication authentication, @RequestBody List<Chunk> chunks) {
         return kerenAiService.addChunks(chunks);
     }
 
     @PutMapping("/chunks/{id}")
-    public Document updateChunk(@PathVariable String id, @RequestBody Chunk chunk) {
+    public Document updateChunk(Authentication authentication, @PathVariable String id, @RequestBody Chunk chunk) {
         return kerenAiService.updateChunk(id, chunk);
     }
 
     @GetMapping("/chunks")
-    public List<Document> getChunks() {
+    public List<Document> getChunks(Authentication authentication) {
         return kerenAiService.getChunks();
     }
 
     @DeleteMapping("/chunks/{id}")
-    public Document deleteChunk(@PathVariable String id) {
+    public Document deleteChunk(Authentication authentication, @PathVariable String id) {
         return kerenAiService.deleteChunk(id);
     }
 
@@ -57,12 +58,12 @@ public class KerenAiController {
     }
 
     @GetMapping("/metrics")
-    public List<ChatMetric> getAllMetrics() {
+    public List<ChatMetric> getAllMetrics(Authentication authentication) {
         return kerenAiService.getAllMetrics();
     }
 
     @GetMapping("/metrics/summary")
-    public ChatMetricSummary getMetricSummary() {
+    public ChatMetricSummary getMetricSummary(Authentication authentication) {
         return kerenAiService.getMetricSummary();
     }
 }
