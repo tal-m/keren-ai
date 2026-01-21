@@ -2,7 +2,6 @@ services:
   db:
     image: ghcr.io/postgresml/postgresml:2.7.12
     container_name: keren-ai-db
-    restart: unless-stopped
     command: sudo -u postgresml psql -d postgresml
     tty: true
     stdin_open: true
@@ -24,7 +23,6 @@ services:
     build:
       context: ./admin-service
     container_name: keren-ai-admin
-    #restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -57,7 +55,6 @@ services:
     build:
       context: ./auth-service
     container_name: keren-ai-auth
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -85,7 +82,6 @@ services:
     build:
       context: ./api-gateway
     container_name: keren-ai-api-gateway
-    restart: unless-stopped
     ports:
       - "4003:4003"
     depends_on:
@@ -115,7 +111,6 @@ services:
       args:
         - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     container_name: keren-ai-frontend
-    restart: unless-stopped
     ports:
       - "4173:4173"
     depends_on:

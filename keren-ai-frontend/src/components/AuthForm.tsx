@@ -15,7 +15,7 @@ const AuthForm: React.FC = () => {
     setError(null);
 
     try {
-      const result: any = await apiPost('/api/auth/login', { email, password });
+      const result: any = await apiPost('/api/v1/auth/login', { email, password });
       if (result?.accessToken && result?.refreshToken) {
         login(result.accessToken, result.refreshToken);
       } else {

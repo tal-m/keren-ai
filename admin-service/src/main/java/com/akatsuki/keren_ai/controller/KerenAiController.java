@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @Slf4j
-@RequestMapping("/api/v1/admin")
+@RequestMapping("/admin")
 public class KerenAiController {
     private final KerenAiService kerenAiService;
 
