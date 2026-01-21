@@ -1,65 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import ChatPanel from './ChatPanel';
 
 const CHAT_Z = 99999;
 
-type Point = { x: number; y: number };
-
-type DragState = {
-  isDown: boolean;
-  start: Point;
-  orig: Point;
-};
-
 const ChatWidget: React.FC = () => {
   const [open, setOpen] = useState(true);
   const [logoOk, setLogoOk] = useState(true);
-  const [logoUrl] = useState(() => `/reichman_university_logo.png?v=${Date.now()}`);
-  const [pos, setPos] = useState<{ right: number; bottom: number; left: number | null; top: number | null }>({
-    right: 20,
-    bottom: 20,
-    left: null,
-    top: null,
-  });
 
-  const dragRef = useRef<DragState>({ isDown: false, start: { x: 0, y: 0 }, orig: { x: 0, y: 0 } });
-  const widgetRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    const onMove = (e: MouseEvent) => {
-      const d = dragRef.current;
-      if (!d.isDown) return;
-      const dx = e.clientX - d.start.x;
-      const dy = e.clientY - d.start.y;
-      setPos({ right: 20, bottom: 20, left: d.orig.x + dx, top: d.orig.y + dy });
-    };
-    const onUp = () => {
-      dragRef.current.isDown = false;
-      document.body.style.userSelect = '';
-    };
-
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onUp);
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      window.removeEventListener('mouseup', onUp);
-    };
-  }, []);
-
-  const startDrag = (e: React.MouseEvent) => {
-    const el = widgetRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    dragRef.current = {
-      isDown: true,
-      start: { x: e.clientX, y: e.clientY },
-      orig: { x: rect.left, y: rect.top },
-    };
-    document.body.style.userSelect = 'none';
-  };
+  // Vite serves files from `public/` at the site root.
+  const logoUrl = '/reichman_university_logo.png';
 
   const widgetStyle: React.CSSProperties = {
     position: 'fixed',
+    right: 20,
+    bottom: 20,
     zIndex: CHAT_Z,
     width: 360,
     height: 480,
@@ -70,18 +24,12 @@ const ChatWidget: React.FC = () => {
     display: open ? 'flex' : 'none',
     flexDirection: 'column',
     border: '1px solid #e6e6e6',
-    right: pos.left === null ? pos.right : 'auto',
-    bottom: pos.top === null ? pos.bottom : 'auto',
-    left: pos.left !== null ? pos.left : 'auto',
-    top: pos.top !== null ? pos.top : 'auto',
   };
 
   const openBtnStyle: React.CSSProperties = {
     position: 'fixed',
-    right: pos.left === null ? 20 : 'auto',
-    bottom: pos.top === null ? 20 : 'auto',
-    left: pos.left !== null ? pos.left : 'auto',
-    top: pos.top !== null ? pos.top : 'auto',
+    right: 20,
+    bottom: 20,
     width: 56,
     height: 56,
     zIndex: CHAT_Z,
@@ -99,9 +47,8 @@ const ChatWidget: React.FC = () => {
 
   return (
     <>
-      <div ref={widgetRef} style={widgetStyle}>
+      <div style={widgetStyle}>
         <div
-          onMouseDown={startDrag}
           style={{
             height: 44,
             background: 'linear-gradient(90deg,#003f7f,#002e66)',
@@ -111,7 +58,7 @@ const ChatWidget: React.FC = () => {
             justifyContent: 'space-between',
             gap: 8,
             padding: 8,
-            cursor: 'move',
+            cursor: 'default',
             direction: 'ltr',
           }}
         >
@@ -119,7 +66,7 @@ const ChatWidget: React.FC = () => {
             {logoOk ? (
               <img
                 src={logoUrl}
-                alt="Keren-AI"
+                alt="Reichman University"
                 style={{ width: 40, height: 40, objectFit: 'contain', marginRight: 8 }}
                 onError={() => setLogoOk(false)}
               />
