@@ -18,6 +18,7 @@
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
         <module name="keren-ai" />
+        <module name="admin-service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -26,6 +27,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="admin-service" options="-parameters" />
       <module name="api-gateway" options="-parameters" />
       <module name="auth-common" options="-parameters" />
       <module name="auth-service" options="-parameters" />

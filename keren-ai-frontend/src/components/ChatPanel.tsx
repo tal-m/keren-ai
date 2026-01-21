@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { apiPostString } from '../api';
+import { apiPost } from '../api';
 
 type Msg = { type: 'user' | 'bot'; text: string };
+
+type ChatRequest = { message: string };
 
 const ChatPanel: React.FC = () => {
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -24,9 +26,9 @@ const ChatPanel: React.FC = () => {
     setSending(true);
 
     try {
-      // IMPORTANT: backend expects @RequestBody String, so we send a JSON string literal.
-      const reply = await apiPostString('/api/v1/admin/chat', text);
-      setMessages((prev) => [...prev, { type: 'bot', text: reply }]);
+      const payload: ChatRequest = { message: text };
+      const reply = await apiPost('/api/v1/admin/chat', payload);
+      setMessages((prev) => [...prev, { type: 'bot', text: String(reply) }]);
     } catch {
       setMessages((prev) => [...prev, { type: 'bot', text: 'שגיאה בחיבור לשרת' }]);
     } finally {

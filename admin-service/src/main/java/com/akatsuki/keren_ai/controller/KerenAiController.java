@@ -2,6 +2,7 @@ package com.akatsuki.keren_ai.controller;
 
 import com.akatsuki.keren_ai.domain.ChatMetricSummary;
 import com.akatsuki.keren_ai.domain.Chunk;
+import com.akatsuki.keren_ai.dto.ChatRequest;
 import com.akatsuki.keren_ai.entity.ChatMetric;
 import com.akatsuki.keren_ai.service.KerenAiService;
 import lombok.extern.slf4j.Slf4j;
@@ -22,9 +23,9 @@ public class KerenAiController {
     }
 
     @PostMapping("/chat")
-    public String userInput(@RequestBody String userInput) {
-        log.info("Received user input: {}", userInput);
-        return kerenAiService.userInput(userInput);
+    public String userInput(@RequestBody ChatRequest chatRequest) {
+        log.info("Received user input: {}", chatRequest.message());
+        return kerenAiService.userInput(chatRequest.message());
     }
 
     @PostMapping("/chunks")
