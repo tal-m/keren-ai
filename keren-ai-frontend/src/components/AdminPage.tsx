@@ -160,6 +160,8 @@ const AdminPage: React.FC = () => {
 
   const loadMetrics = async () => {
     if (!authToken) return;
+    // print the format of the auth token
+    console.log('Loading metrics with auth token:', authToken);
     setMetricsLoading(true);
     setMetricsError(null);
     try {
