@@ -1,6 +1,7 @@
 package com.akatsuki.auth.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,7 @@ public class User {
     private UUID userId;
 
     @Column(unique = true,nullable = false)
+    @Email(message = "Invalid email format")
     private String email;
 
     @Column(name = "encoded_password")

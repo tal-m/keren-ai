@@ -17,7 +17,6 @@
         <processorPath useClasspath="false">
           <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/unknown/lombok-unknown.jar" />
         </processorPath>
-        <module name="keren-ai" />
         <module name="admin-service" />
       </profile>
     </annotationProcessing>

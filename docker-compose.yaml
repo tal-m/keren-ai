@@ -75,6 +75,8 @@ services:
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
       - SPRING_PROFILES_ACTIVE=prod
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0 -XX:+UseContainerSupport
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
     networks:
       - internal-network
 
