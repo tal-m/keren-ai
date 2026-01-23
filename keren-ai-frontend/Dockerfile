@@ -13,10 +13,8 @@ COPY public ./public
 COPY src ./src
 RUN npm install && npm run build
 
-# Stage 2: Serve
-FROM node:20-alpine AS runner
-WORKDIR /app
-COPY --from=builder /app/dist ./dist
-RUN npm install -g serve
+# Stage 2: Serve (with CORS headers)
+FROM nginx:1.27-alpine AS runner
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 4173
-CMD ["serve", "-s", "dist", "-l", "4173"]

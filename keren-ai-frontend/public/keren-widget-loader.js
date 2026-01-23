@@ -1,46 +1,106 @@
 /*
-  Keren-AI widget loader (MVP)
+  Keren-AI widget loader (MVP) - Native injection (no iframe)
 
-  Usage (client site):
+  Client usage:
     <script>
       window.KEREN_WIDGET_URL = "https://your-widget-host"; // no trailing slash
     </script>
     <script src="https://your-widget-host/keren-widget-loader.js" async></script>
 
-  Notes:
-  - This loader injects an iframe pointing to `${KEREN_WIDGET_URL}/embed.html`.
-  - Keep it simple for MVP; no tokens/options yet.
+  This loader:
+    - creates a container in the client DOM
+    - (optionally) attaches a ShadowRoot for CSS isolation
+    - injects widget CSS
+    - loads widget JS bundle and mounts it
 */
 (function () {
-  var base = (window.KEREN_WIDGET_URL || '').toString().replace(/\/+$/, '');
-  if (!base) {
-    // eslint-disable-next-line no-console
-    console.error('[KerenWidget] Missing window.KEREN_WIDGET_URL (e.g. "https://widget.example.com").');
-    return;
+  function stripTrailingSlashes(url) {
+    return (url || '').toString().replace(/\/+$/, '');
   }
 
-  var src = base + '/embed.html';
+  function detectBaseFromCurrentScript() {
+    var script = document.currentScript;
+    if (!script) {
+      var scripts = document.getElementsByTagName('script');
+      script = scripts[scripts.length - 1];
+    }
+    if (!script || !script.src) return '';
+    try {
+      var u = new URL(script.src);
+      return u.origin;
+    } catch (e) {
+      return '';
+    }
+  }
 
-  // Avoid double-inject.
-  if (document.getElementById('keren-widget-iframe')) return;
+  function ensureOnce(id) {
+    return !document.getElementById(id);
+  }
 
-  var iframe = document.createElement('iframe');
-  iframe.id = 'keren-widget-iframe';
-  iframe.src = src;
-  iframe.title = 'Keren-AI Chatbot';
-  iframe.setAttribute('aria-label', 'Keren-AI Chatbot');
+  function inject() {
+    // Avoid double-inject.
+    if (!ensureOnce('keren-widget-host')) return;
 
-  // The widget itself is fixed-position inside the iframe.
-  // The iframe needs to cover the area where the widget may appear.
-  iframe.style.position = 'fixed';
-  iframe.style.right = '0';
-  iframe.style.bottom = '0';
-  iframe.style.width = '420px';
-  iframe.style.height = '560px';
-  iframe.style.border = '0';
-  iframe.style.background = 'transparent';
-  iframe.style.zIndex = '99999';
+    var base = stripTrailingSlashes(window.KEREN_WIDGET_URL) || stripTrailingSlashes(detectBaseFromCurrentScript());
+    if (!base) {
+      // eslint-disable-next-line no-console
+      console.error('[KerenWidget] Missing window.KEREN_WIDGET_URL (e.g. "https://widget.example.com").');
+      return;
+    }
 
-  document.body.appendChild(iframe);
+    // Host element in the client DOM.
+    var host = document.createElement('div');
+    host.id = 'keren-widget-host';
+    document.body.appendChild(host);
+
+    // Shadow DOM for isolation (recommended).
+    var target = host;
+    if (host.attachShadow) {
+      target = host.attachShadow({ mode: 'open' });
+    }
+
+    // Expose the mount target for the widget bundle.
+    window.__KEREN_WIDGET_TARGET__ = target;
+
+    // Inject CSS into <head> (works even with shadow DOM; styles are global).
+    // For MVP, global CSS is OK. If you want fully isolated styles later, we can inline CSS into shadow root.
+    if (ensureOnce('keren-widget-css')) {
+      var link = document.createElement('link');
+      link.id = 'keren-widget-css';
+      link.rel = 'stylesheet';
+      link.href = base + '/assets/widget.css';
+      document.head.appendChild(link);
+    }
+
+    // Load the widget bundle.
+    if (ensureOnce('keren-widget-bundle')) {
+      var script = document.createElement('script');
+      script.id = 'keren-widget-bundle';
+      script.type = 'module';
+      script.src = base + '/assets/widget-entry.js';
+      script.onload = function () {
+        // If the bundle didn't auto-mount (should), try calling the global.
+        if (typeof window.mountKerenWidget === 'function' && window.__KEREN_WIDGET_TARGET__) {
+          try {
+            window.mountKerenWidget(window.__KEREN_WIDGET_TARGET__);
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('[KerenWidget] mountKerenWidget failed:', e);
+          }
+        }
+      };
+      script.onerror = function (e) {
+        // eslint-disable-next-line no-console
+        console.error('[KerenWidget] Failed loading widget bundle:', e);
+      };
+      document.head.appendChild(script);
+    }
+  }
+
+  // async-safe: wait for body.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', inject);
+  } else {
+    inject();
+  }
 })();
-
