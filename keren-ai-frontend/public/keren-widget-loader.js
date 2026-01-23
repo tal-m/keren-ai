@@ -1,15 +1,11 @@
 /*
-  Keren-AI widget loader (MVP)
+  Keren-AI widget loader (MVP) - Updated for Client Origin Tracking
 
   Usage (client site):
     <script>
       window.KEREN_WIDGET_URL = "https://your-widget-host"; // no trailing slash
     </script>
     <script src="https://your-widget-host/keren-widget-loader.js" async></script>
-
-  Notes:
-  - This loader injects an iframe pointing to `${KEREN_WIDGET_URL}/embed.html`.
-  - Keep it simple for MVP; no tokens/options yet.
 */
 (function () {
   var base = (window.KEREN_WIDGET_URL || '').toString().replace(/\/+$/, '');
@@ -19,7 +15,11 @@
     return;
   }
 
-  var src = base + '/embed.html';
+  // 1. Capture the origin of the Client Site (e.g., "http://localhost:5500")
+  var clientOrigin = window.location.origin;
+
+  // 2. Append it to the src as a query parameter
+  var src = base + '/embed.html?parentOrigin=' + encodeURIComponent(clientOrigin);
 
   // Avoid double-inject.
   if (document.getElementById('keren-widget-iframe')) return;
@@ -31,7 +31,6 @@
   iframe.setAttribute('aria-label', 'Keren-AI Chatbot');
 
   // The widget itself is fixed-position inside the iframe.
-  // The iframe needs to cover the area where the widget may appear.
   iframe.style.position = 'fixed';
   iframe.style.right = '0';
   iframe.style.bottom = '0';
@@ -43,4 +42,3 @@
 
   document.body.appendChild(iframe);
 })();
-
