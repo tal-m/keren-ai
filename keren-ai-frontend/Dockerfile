@@ -8,6 +8,7 @@ ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
 COPY package.json tsconfig.json vite.config.ts postcss.config.js tailwind.config.js ./
 COPY index.html ./
+COPY embed.html ./
 COPY public ./public
 COPY src ./src
 RUN npm install && npm run build
