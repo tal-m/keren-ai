@@ -1,5 +1,5 @@
 services:
-  db:
+  keren-ai-db:
     image: ghcr.io/postgresml/postgresml:2.7.12
     container_name: keren-ai-db
     command: tail -f /dev/null
@@ -11,6 +11,7 @@ services:
       #- "8000:8000"
     volumes:
       - ./keren_ai_data:/var/lib/postgresql
+        #- keren_ai_volume:/var/lib/postgresql
     environment:
       - POSTGRES_USER=${SPRING_DATASOURCE_USERNAME}
       - POSTGRES_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
@@ -29,7 +30,7 @@ services:
       context: ./admin-service
     container_name: keren-ai-admin
     depends_on:
-      db:
+      keren-ai-db:
         condition: service_healthy
     healthcheck:
       test: [
@@ -62,7 +63,7 @@ services:
       context: ./auth-service
     container_name: keren-ai-auth
     depends_on:
-      db:
+      keren-ai-db:
         condition: service_healthy
     healthcheck:
       test: [
@@ -74,7 +75,7 @@ services:
       retries: 3
       start_period: 60s
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgresml
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://keren-ai-db:5432/postgresml
       - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
       - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
@@ -90,8 +91,8 @@ services:
     build:
       context: ./api-gateway
     container_name: keren-ai-api-gateway
-    ports:
-      - "4003:4003"
+      #    ports:
+      #- "4003:4003"
     depends_on:
       admin-service:
         condition: service_healthy
@@ -112,6 +113,29 @@ services:
       - JAVA_TOOL_OPTIONS=-XX:MaxRAMPercentage=75.0
     networks:
       - internal-network
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      # Match incoming requests on a specific hostname
+      - "traefik.http.routers.kerenapi.rule=Host(`${KERENAPI_HOSTNAME}`)"
+      # Assign the router to a named Traefik service
+      - "traefik.http.routers.kerenapi.service=kerenapi"
+      # Use the 'websecure' (HTTPS) entry point
+      - "traefik.http.routers.kerenapi.entrypoints=websecure"
+      # Define the internal container port for routing
+      - "traefik.http.services.kerenapi.loadbalancer.server.port=4003"
+      # Enable TLS on this router
+      - "traefik.http.routers.kerenapi.tls=true"
+      # Use Let's Encrypt for certificate management
+      - "traefik.http.routers.kerenapi.tls.certresolver=letsencrypt"
+      # Pass the original Host header to the container
+      - "traefik.http.services.kerenapi.loadbalancer.passhostheader=true"
+      # Apply a compression middleware
+      - "traefik.http.routers.kerenapi.middlewares=compresstraefik"
+      # Define settings for the compression middleware
+      - "traefik.http.middlewares.compresstraefik.compress=true"
+      # Specify which Docker network Traefik should use for routing
+      - "traefik.docker.network=traefik"
 
   frontend:
     build:
@@ -119,8 +143,8 @@ services:
       args:
         - VITE_API_BASE_URL=${VITE_API_BASE_URL}
     container_name: keren-ai-frontend
-    ports:
-      - "4173:4173"
+      #    ports:
+      #      - "4173:4173"
     depends_on:
       api-gateway:
         condition: service_healthy
@@ -138,7 +162,7 @@ services:
       # Use the 'websecure' (HTTPS) entry point
       - "traefik.http.routers.kerenai.entrypoints=websecure"
       # Define the internal container port for routing
-      - "traefik.http.services.kerenai.loadbalancer.server.port=4000"
+      - "traefik.http.services.kerenai.loadbalancer.server.port=4173"
       # Enable TLS on this router
       - "traefik.http.routers.kerenai.tls=true"
       # Use Let's Encrypt for certificate management
@@ -165,5 +189,5 @@ networks:
     external: true
 
 
-volumes:
-  keren_ai_data:
+      #volumes:
+      #  keren_ai_volume:
